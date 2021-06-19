@@ -1,0 +1,7 @@
+.terraform
+*.tfstate
+*.tfstate.backup
+*.tfstate.*.backup
+*.lock.hcl
+*.delete
+*.simple
