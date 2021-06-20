@@ -1,5 +1,5 @@
 locals {
-  policies = flatten([for kv in var.vault-mounts : [
+  kv-policies = flatten([for kv in var.vault-mounts : [
     for policy in kv.policies : {
       name   = "${kv.path}-${policy.name}"
       policy = policy.policy
@@ -8,7 +8,7 @@ locals {
 }
 
 resource "vault_policy" "all" {
-  for_each = { for policy in local.policies : policy.name => policy }
+  for_each = { for policy in local.kv-policies : policy.name => policy }
   name     = each.value.name
   policy   = each.value.policy
 }
