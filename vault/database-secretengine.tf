@@ -1,24 +1,3 @@
-locals {
-  db-secretsengine = flatten([for backend in var.db-secretengines : [
-    for db in backend.names : {
-      backend       = backend.backend
-      name          = db.name
-      allowed_roles = [for role in db.roles[*]["role"] : "${backend.backend}-${db.name}-${role}"]
-      # allowed_roles = db.roles
-      type = db.type
-    }
-  ]])
-  db-role = flatten([for backend in var.db-secretengines : [
-    for db in backend.names : [for role in db.roles : {
-      backend             = backend.backend
-      db_name             = db.name
-      type                = db.type
-      role                = role.role
-      creation_statements = role.creation_statements
-    }]
-
-  ]])
-}
 
 
 resource "vault_database_secret_backend_connection" "database" {

@@ -1,5 +1,5 @@
 resource "vault_mount" "secretengine" {
-  for_each                  = { for vault-mount in var.vault-mounts : vault-mount.path => vault-mount }
+  for_each                  = { for vault-mount in var.secret-engines : vault-mount.path => vault-mount }
   path                      = each.value.path
   type                      = each.value.type
   description               = each.value.description
