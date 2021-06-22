@@ -103,3 +103,48 @@ EOT
     }]
   }
 ]
+
+auth-backends = [{
+  path = "google-oidc"
+  type = "oidc"
+  # further configuration is from UI
+  },
+  {
+    path         = "gitlab-jwt"
+    type         = "jwt"
+    jwks_url     = "https://gitlab.com/-/jwks"
+    bound_issuer = "gitlab.com"
+    tune = {
+      max_lease_ttl = "90000s"
+    }
+    roles = [{
+      role_name = "deploy-app"
+      # token_policies  = ["default", "dev", "prod"] # policy take from below block
+      bound_audiences = ["https://myco.test"]
+      user_claim      = "user_email"
+      bound_claims = {
+        project_id = "26398385"
+        ref        = "master"
+        ref_type   = "branch"
+      }
+    }]
+    policies = [{
+      name   = "deployer"
+      policy = <<EOT
+path "hr-kv/data/hr-app1/dev" {
+  capabilities = ["read"]
+}
+EOT
+      },
+      {
+        name   = "tester"
+        policy = <<EOT
+path "hr-kv/data/hr-app1/dev" {
+  capabilities = ["read"]
+}
+EOT
+      },
+    ]
+  },
+
+]

@@ -1,5 +1,8 @@
+# run manually 
+# vault write it-gcp/config credentials=@imank-vault-ff41205a1944.json
+
 resource "vault_gcp_secret_roleset" "roleset" {
-  for_each     = { for item in local.gcp-role-secretengines : "${item.backend}" => item }
+  for_each     = { for item in local.gcp-role-secretengines : item.backend => item }
   backend      = each.value.backend
   roleset      = each.value.roleset
   secret_type  = each.value.secret_type

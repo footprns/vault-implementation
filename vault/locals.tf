@@ -43,11 +43,20 @@ locals {
       binding      = role.binding
     }
   ] if ssh-secretengine.type == "gcp"])
-}
 
-
-
-
-output "debug" {
-  value = local.gcp-role-secretengines
+  auth-jwt-backends = { for item in var.auth-backends : item.path => item if item.type == "jwt" }
+  auth-jwt-policies = flatten([for item in var.auth-backends : [for policy in item.policies : {
+    path   = item.path
+    name   = policy.name
+    policy = policy.policy
+  }] if item.type == "jwt"])
+  auth-jwt-roles = flatten([for item in var.auth-backends : [for role in item.roles : {
+    backend         = item.path
+    role_type       = item.type
+    role_name       = role.role_name
+    token_policies  = [for policy in item.policies : "${item.path}-${policy.name}"]
+    bound_audiences = role.bound_audiences
+    user_claim      = role.user_claim
+    bound_claims    = role.bound_claims
+  }] if item.type == "jwt"])
 }
