@@ -1,14 +1,4 @@
-locals {
-  ssh-secretengines = [for ssh-secretengine in var.vault-mounts : ssh-secretengine if ssh-secretengine.type == "ssh"]
-  ssh-role-secretengines = flatten([for ssh-secretengine in var.vault-mounts : [
-    for role in ssh-secretengine.roles : {
-      backend  = ssh-secretengine.path
-      name     = "${ssh-secretengine.path}-${role.name}"
-      key_type = role.key_type
-    }
-  ] if ssh-secretengine.type == "ssh"])
-  # ssh-role-secretengines = [ for ssh-secretengine in var.vault-mounts : ssh-secretengine if ssh-secretengine.type == "ssh" ]
-}
+
 
 resource "vault_ssh_secret_backend_ca" "this" {
   for_each             = { for path in local.ssh-secretengines : path.path => path }
